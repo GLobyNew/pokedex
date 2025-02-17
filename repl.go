@@ -7,13 +7,13 @@ import (
 	"strings"
 )
 
-const(
+const (
 	locationAreasURL = "https://pokeapi.co/api/v2/location-area/"
 )
 
 type configStruct struct {
-	next string
-	previous string 
+	next     string
+	previous string
 }
 
 type cliCommand struct {
@@ -25,32 +25,36 @@ type cliCommand struct {
 // The commands itself:
 var registry map[string]cliCommand
 
-
 func setInitConfig() *configStruct {
 	return &configStruct{
-		next: locationAreasURL + "?offset=20",
-		previous: locationAreasURL + "?offset=40",
+		next:     locationAreasURL + "?offset=0",
+		previous: locationAreasURL + "?offset=0",
 	}
 }
 
 func init() {
 	registry = map[string]cliCommand{
-	"exit": {
-		name:        "exit",
-		description: "Exit the Pokedex",
-		callback:    commandExit,
-	},
-	"help": {
-		name:        "help",
-		description: "Print help",
-		callback:    commandHelp,
-	},
-	"map": {
-		name: "map",
-		description: "Show 20 new location areas",
-		callback: commandMap,
-	},
-}
+		"exit": {
+			name:        "exit",
+			description: "Exit the Pokedex",
+			callback:    commandExit,
+		},
+		"help": {
+			name:        "help",
+			description: "Print help",
+			callback:    commandHelp,
+		},
+		"map": {
+			name:        "map",
+			description: "Show 20 new location areas",
+			callback:    commandMap,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Show 20 previous location areas",
+			callback:    commandMapb,
+		},
+	}
 
 }
 
@@ -69,7 +73,7 @@ func commandHelp(config *configStruct) error {
 }
 
 func repl() {
-	config := setInitConfig()	
+	config := setInitConfig()
 	sc := bufio.NewScanner(bufio.NewReader(os.Stdin))
 	for {
 		fmt.Print("Pokedex > ")
