@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/GLobyNew/pokedex/internal/pokecache"
 )
 
 const (
@@ -14,6 +16,7 @@ const (
 type configStruct struct {
 	next     string
 	previous string
+	cache    pokecache.Cache
 }
 
 type cliCommand struct {
@@ -29,6 +32,7 @@ func setInitConfig() *configStruct {
 	return &configStruct{
 		next:     locationAreasURL + "?offset=0",
 		previous: locationAreasURL + "?offset=0",
+		cache: *pokecache.NewCache(20000),
 	}
 }
 

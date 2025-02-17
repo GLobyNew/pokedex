@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
-	"errors"
-	"encoding/json"
+
+	"github.com/GLobyNew/pokedex/internal/pokecache"
 )
 
 type locationAreas struct {
@@ -18,6 +20,7 @@ type locationAreas struct {
 }
 
 func commandMap(config *configStruct) error {
+	// TODO: implement cache usage
 	res, err := http.Get(config.next)
 	if err != nil {
 		return errors.New("failed Get request in commandMap func")
@@ -27,10 +30,10 @@ func commandMap(config *configStruct) error {
 	if err := decoder.Decode(&locAreas); err != nil {
 		return errors.New("failed to decode response")
 	}
-	
+
 	config.next = locAreas.Next
 	config.previous = locAreas.Previous
-	
+
 	for _, area := range locAreas.Results {
 		fmt.Println(area.Name)
 	}
@@ -51,13 +54,13 @@ func commandMapb(config *configStruct) error {
 	if err := decoder.Decode(&locAreas); err != nil {
 		return errors.New("failed to decode response")
 	}
-	
+
 	config.next = locAreas.Next
 	config.previous = locAreas.Previous
-	
+
 	for _, area := range locAreas.Results {
 		fmt.Println(area.Name)
 	}
-	
+
 	return nil
 }
