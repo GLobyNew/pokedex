@@ -7,14 +7,31 @@ import (
 	"strings"
 )
 
+const(
+	locationAreasURL = "https://pokeapi.co/api/v2/location-area/"
+)
+
+type configStruct struct {
+	next string
+	previous string 
+}
+
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*configStruct) error
 }
 
 // The commands itself:
 var registry map[string]cliCommand
+
+
+func setInitConfig() *configStruct {
+	return &configStruct{
+		next: locationAreasURL + "?offset=20",
+		previous: locationAreasURL + "?offset=40",
+	}
+}
 
 func init() {
 	registry = map[string]cliCommand{
@@ -28,17 +45,22 @@ func init() {
 		description: "Print help",
 		callback:    commandHelp,
 	},
+	"map": {
+		name: "map",
+		description: "Show 20 new location areas",
+		callback: commandMap,
+	},
 }
 
 }
 
-func commandExit() error {
+func commandExit(config *configStruct) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil
 }
 
-func commandHelp() error {
+func commandHelp(config *configStruct) error {
 	fmt.Printf("Welcome to the Pokedex!\nUsage:\n\n")
 	for _, key := range registry {
 		fmt.Printf("%v: %v\n", key.name, key.description)
@@ -47,13 +69,14 @@ func commandHelp() error {
 }
 
 func repl() {
+	config := setInitConfig()	
 	sc := bufio.NewScanner(bufio.NewReader(os.Stdin))
 	for {
 		fmt.Print("Pokedex > ")
 		sc.Scan()
 		curCom := strings.Fields(strings.ToLower(sc.Text()))
 		if val, ok := registry[curCom[0]]; ok {
-			val.callback()
+			val.callback(config)
 		} else {
 			fmt.Println("Unknown command")
 		}
