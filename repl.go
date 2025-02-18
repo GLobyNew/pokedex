@@ -15,6 +15,7 @@ const (
 )
 
 type configStruct struct {
+	current  string
 	next     string
 	previous string
 }
@@ -30,6 +31,7 @@ var registry map[string]cliCommand
 
 func setInitConfig() *configStruct {
 	return &configStruct{
+		current:  locationAreasURL + "?offset=0",
 		next:     locationAreasURL + "?offset=0",
 		previous: locationAreasURL + "?offset=0",
 	}

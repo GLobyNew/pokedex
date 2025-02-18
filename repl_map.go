@@ -69,13 +69,10 @@ func setConfigPages(config *configStruct, data []byte) error {
 	}
 	config.next = locAreas.Next
 	config.previous = locAreas.Previous
-	fmt.Println(config.next)
-	fmt.Println(config.previous)
 	return nil
 }
 
 func newPageResult(config *configStruct, cache *pokecache.Cache, d direction) error {
-	// TODO Fix cache bug
 	var URL string
 	switch d {
 	case next:
@@ -99,7 +96,7 @@ func newPageResult(config *configStruct, cache *pokecache.Cache, d direction) er
 	if err != nil {
 		return err
 	}
-	cache.Add(config.next, jsonData)
+	cache.Add(URL, jsonData)
 	printResults(jsonData)
 	defer setConfigPages(config, jsonData)
 
