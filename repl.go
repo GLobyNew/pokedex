@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/GLobyNew/pokedex/internal/pokecache"
@@ -84,7 +83,7 @@ func repl() {
 	for {
 		fmt.Print("Pokedex > ")
 		sc.Scan()
-		curCom := strings.Fields(strings.ToLower(sc.Text()))
+		curCom := cleanInput(sc.Text())
 		if val, ok := registry[curCom[0]]; ok {
 			val.callback(config, cache)
 		} else {
