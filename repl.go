@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/GLobyNew/pokedex/internal/pokecache"
 )
@@ -16,13 +17,12 @@ const (
 type configStruct struct {
 	next     string
 	previous string
-	cache    pokecache.Cache
 }
 
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*configStruct) error
+	callback    func(*configStruct, *pokecache.Cache) error
 }
 
 // The commands itself:
@@ -32,7 +32,6 @@ func setInitConfig() *configStruct {
 	return &configStruct{
 		next:     locationAreasURL + "?offset=0",
 		previous: locationAreasURL + "?offset=0",
-		cache: *pokecache.NewCache(20000),
 	}
 }
 
@@ -62,13 +61,13 @@ func init() {
 
 }
 
-func commandExit(config *configStruct) error {
+func commandExit(config *configStruct, cache *pokecache.Cache) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil
 }
 
-func commandHelp(config *configStruct) error {
+func commandHelp(config *configStruct, cache *pokecache.Cache) error {
 	fmt.Printf("Welcome to the Pokedex!\nUsage:\n\n")
 	for _, key := range registry {
 		fmt.Printf("%v: %v\n", key.name, key.description)
@@ -78,13 +77,14 @@ func commandHelp(config *configStruct) error {
 
 func repl() {
 	config := setInitConfig()
+	cache := pokecache.NewCache(20 * time.Second)
 	sc := bufio.NewScanner(bufio.NewReader(os.Stdin))
 	for {
 		fmt.Print("Pokedex > ")
 		sc.Scan()
 		curCom := strings.Fields(strings.ToLower(sc.Text()))
 		if val, ok := registry[curCom[0]]; ok {
-			val.callback(config)
+			val.callback(config, cache)
 		} else {
 			fmt.Println("Unknown command")
 		}
