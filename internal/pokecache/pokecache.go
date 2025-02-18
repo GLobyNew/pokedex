@@ -44,7 +44,7 @@ func (c *Cache) Get(key string) ([]byte, bool) {
 }
 
 func (c *Cache) reapLoop(interval time.Duration) {
-	ticker := time.NewTicker(time.Second)
+	ticker := time.NewTicker(interval)
 	for {
 		<-ticker.C
 		c.mu.Lock()
