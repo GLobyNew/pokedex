@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
 
 	"github.com/GLobyNew/pokedex/internal/argumentbuffer"
 	"github.com/GLobyNew/pokedex/internal/pokecache"
@@ -76,22 +75,22 @@ func bytesToPokemonLocsResp(data []byte) (PokemonsLocsResp, error) {
 	return pokemonLocs, nil
 }
 
-func getPokemonNameByID(id int) (string, error) {
-	URL := pokemonURL + strconv.Itoa(id)
-	resp, err := requests.MakeGETRequest(URL)
-	if err != nil {
-		return "", err
-	}
-	data := make(map[string]interface{})
-	if err := json.Unmarshal(resp, &data); err != nil {
-		return "", errors.New("failed to decode response")
-	}
-	if name, ok := data["name"].(string); ok {
-		return name, nil
-	} else {
-		return "", errors.New("no name found when parsing pokemon name")
-	}
-}
+// func getPokemonNameByID(id int) (string, error) {
+// 	URL := pokemonURL + strconv.Itoa(id)
+// 	resp, err := requests.MakeGETRequest(URL)
+// 	if err != nil {
+// 		return "", err
+// 	}
+// 	data := make(map[string]interface{})
+// 	if err := json.Unmarshal(resp, &data); err != nil {
+// 		return "", errors.New("failed to decode response")
+// 	}
+// 	if name, ok := data["name"].(string); ok {
+// 		return name, nil
+// 	} else {
+// 		return "", errors.New("no name found when parsing pokemon name")
+// 	}
+// }
 
 func generatePokemonListStr(ch chan string, listCh chan string) {
 	pokemonList := ""
@@ -119,13 +118,7 @@ func requestAndPrintPokemon(data []byte, cache *pokecache.Cache, URL string) err
 	listCh := make(chan string)
 	go generatePokemonListStr(ch, listCh)
 	for _, PokemonEncounter := range pokemonLocs.PokemonEncounters {
-		for _, PokemonID := range PokemonEncounter.Pokemon.Name {
-			pokemonName, err := getPokemonNameByID(int(PokemonID))
-			if err != nil {
-				return err
-			}
-			ch <- pokemonName
-		}
+		ch <- PokemonEncounter.Pokemon.Name
 	}
 	close(ch)
 	list := <-listCh
