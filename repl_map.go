@@ -7,6 +7,7 @@ import (
 
 	"github.com/GLobyNew/pokedex/internal/pokecache"
 	"github.com/GLobyNew/pokedex/internal/requests"
+	"github.com/GLobyNew/pokedex/internal/argumentbuffer"
 )
 
 type direction = int
@@ -36,7 +37,7 @@ func bytesTolocationAreas(data []byte) (locationAreas, error) {
 	return locAreas, nil
 }
 
-func printResults(data []byte) error {
+func printListLocAreas(data []byte) error {
 	locAreas, err := bytesTolocationAreas(data)
 	if err != nil {
 		return err
@@ -74,7 +75,7 @@ func newPageResult(config *configStruct, cache *pokecache.Cache, d direction) er
 
 	if data, exist := cache.Get(URL); exist {
 		defer setConfigPages(config, data)
-		printResults(data)
+		printListLocAreas(data)
 		return nil
 	}
 	jsonData, err := requests.MakeGETRequest(URL)
@@ -82,13 +83,13 @@ func newPageResult(config *configStruct, cache *pokecache.Cache, d direction) er
 		return err
 	}
 	cache.Add(URL, jsonData)
-	printResults(jsonData)
+	printListLocAreas(jsonData)
 	defer setConfigPages(config, jsonData)
 
 	return nil
 }
 
-func commandMap(config *configStruct, cache *pokecache.Cache) error {
+func commandMap(config *configStruct, cache *pokecache.Cache, args *argumentbuffer.ArgumentBuff) error {
 	err := newPageResult(config, cache, next)
 	if err != nil {
 		return err
@@ -96,7 +97,7 @@ func commandMap(config *configStruct, cache *pokecache.Cache) error {
 	return nil
 }
 
-func commandMapb(config *configStruct, cache *pokecache.Cache) error {
+func commandMapb(config *configStruct, cache *pokecache.Cache, args *argumentbuffer.ArgumentBuff) error {
 	err := newPageResult(config, cache, previous)
 	if err != nil {
 		return err
