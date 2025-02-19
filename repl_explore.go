@@ -10,10 +10,6 @@ import (
 	"github.com/GLobyNew/pokedex/internal/requests"
 )
 
-const (
-	pokemonURL = "https://pokeapi.co/api/v2/pokemon/"
-)
-
 type PokemonsLocsResp struct {
 	EncounterMethodRates []struct {
 		EncounterMethod struct {
