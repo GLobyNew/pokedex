@@ -4,10 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"net/http"
 
 	"github.com/GLobyNew/pokedex/internal/pokecache"
+	"github.com/GLobyNew/pokedex/internal/requests"
 )
 
 type direction = int
@@ -27,21 +26,7 @@ type locationAreas struct {
 	} `json:"results"`
 }
 
-func MakeRequest(config *configStruct, URL string) ([]byte, error) {
-	client := &http.Client{}
-	req, _ := http.NewRequest("GET", URL, nil)
-	res, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
 
-	resBody, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, err
-	}
-	return []byte(resBody), nil
-}
 
 func bytesTolocationAreas(data []byte) (locationAreas, error) {
 	var locAreas locationAreas
@@ -92,7 +77,7 @@ func newPageResult(config *configStruct, cache *pokecache.Cache, d direction) er
 		printResults(data)
 		return nil
 	}
-	jsonData, err := MakeRequest(config, URL)
+	jsonData, err := requests.MakeGETRequest(URL)
 	if err != nil {
 		return err
 	}
