@@ -88,14 +88,6 @@ func bytesToPokemonLocsResp(data []byte) (PokemonsLocsResp, error) {
 // 	}
 // }
 
-func generatePokemonListStr(ch chan string, listCh chan string) {
-	pokemonList := ""
-	for name := range ch {
-		pokemonList += "- " + name + "\n"
-	}
-	listCh <- pokemonList
-}
-
 func cacheList(cache *pokecache.Cache, URL string, list string) {
 	cache.Add(URL, []byte(list))
 }
@@ -107,21 +99,16 @@ func printFromCache(cache *pokecache.Cache, URL string) {
 
 func requestAndPrintPokemon(data []byte, cache *pokecache.Cache, URL string) error {
 	pokemonLocs, err := bytesToPokemonLocsResp(data)
+	pokemonList := ""
 	if err != nil {
 		return err
 	}
-	ch := make(chan string)
-	listCh := make(chan string)
-	go generatePokemonListStr(ch, listCh)
 	for _, PokemonEncounter := range pokemonLocs.PokemonEncounters {
-		ch <- PokemonEncounter.Pokemon.Name
+		pokemonList += "- " + PokemonEncounter.Pokemon.Name + "\n"
 	}
-	close(ch)
-	list := <-listCh
 	fmt.Println("Found Pokemon:")
-	fmt.Println(list)
-	cacheList(cache, URL, list)
-	close(listCh)
+	fmt.Println(pokemonList)
+	cacheList(cache, URL, pokemonList)
 	return nil
 }
 
