@@ -16,8 +16,8 @@ const (
 
 type configStruct struct {
 	catchedPokemons map[string]Pokemon
-	next     string
-	previous string
+	next            string
+	previous        string
 }
 
 type cliCommandNoArgs struct {
@@ -32,8 +32,8 @@ var registry map[string]cliCommandNoArgs
 func setInitConfig() *configStruct {
 	return &configStruct{
 		catchedPokemons: map[string]Pokemon{},
-		next:     locationAreasURL + "?offset=0",
-		previous: locationAreasURL + "?offset=0",
+		next:            locationAreasURL + "?offset=0",
+		previous:        locationAreasURL + "?offset=0",
 	}
 }
 
@@ -65,9 +65,14 @@ func init() {
 			callback:    commandExplore,
 		},
 		"catch": {
-			name: "catch",
+			name:        "catch",
 			description: "Try to catch chosen Pokemon",
-			callback: commandCatch,
+			callback:    commandCatch,
+		},
+		"inspect": {
+			name:        "inspect",
+			description: "Inspect cateched Pokemon",
+			callback:    commandInspect,
 		},
 	}
 }
