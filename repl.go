@@ -15,6 +15,7 @@ const (
 )
 
 type configStruct struct {
+	catchedPokemons map[string]Pokemon
 	next     string
 	previous string
 }
@@ -30,6 +31,7 @@ var registry map[string]cliCommandNoArgs
 
 func setInitConfig() *configStruct {
 	return &configStruct{
+		catchedPokemons: map[string]Pokemon{},
 		next:     locationAreasURL + "?offset=0",
 		previous: locationAreasURL + "?offset=0",
 	}
@@ -61,6 +63,11 @@ func init() {
 			name:        "explore",
 			description: "List what Pokemons can be found in desired location",
 			callback:    commandExplore,
+		},
+		"catch": {
+			name: "catch",
+			description: "Try to catch chosen Pokemon",
+			callback: commandCatch,
 		},
 	}
 }

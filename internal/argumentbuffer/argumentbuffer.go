@@ -26,7 +26,7 @@ func (b *ArgumentBuff) Set(args []string) {
 		b.command = args[0]
 	} else if len(args) > 1 {
 		b.command = args[0]
-		b.arguments = args[1 : len(args)]
+		b.arguments = args[1 : ]
 	}
 }
 
