@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 )
@@ -11,6 +12,10 @@ func MakeGETRequest(URL string) ([]byte, error) {
 	res, err := client.Do(req)
 	if err != nil {
 		return nil, err
+	}
+	if res.StatusCode != 200 {
+		fmt.Printf("No info about requested entity\n")
+		return []byte{}, nil
 	}
 	defer res.Body.Close()
 

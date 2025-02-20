@@ -31,6 +31,7 @@ func commandCatch(config *configStruct, cache *pokecache.Cache, args *argumentbu
 	fmt.Printf("Throwing a Pokeball at %v...\n", pokemonName)
 	pokemonData, err := requests.MakeGETRequest(URL)
 	if err != nil {
+		fmt.Println("yes")
 		return err
 	}
 	pokemon, err := bytesToPokemon(pokemonData)
